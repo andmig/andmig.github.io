@@ -7,6 +7,7 @@
             body{
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 1em;
+                line-height: 1.5em;
             }
 
             code, pre{
@@ -17,18 +18,33 @@
                 width: 100%;
                 border-collapse: collapse;
                 margin: 0 0 1.5em 0;
+                border: 1px solid #cccccc;
             }
 
             table.macro-spec th:nth-child(1){
                 width: 20%;
+                height: 0;
             }
             table.macro-spec th:nth-child(2){
                 width: 80%;
+                height: 0;
+            }
+
+            table.macro-spec tr:nth-child(1){
+                background-color: #cccccc !important;
+            }
+
+            table.macro-spec tr:nth-child(even){
+                background-color: #eeeeee;
+            }
+
+            table.macro-spec tr:nth-child(2){
+                background-color: #cccccc;
             }
 
             table.macro-spec tr td{
                 vertical-align: top;
-                border: 1px solid #000;
+                border: 0px solid #000;
                 padding: 0.5em;
             }
 
@@ -37,7 +53,7 @@
 
             }
             table.macro-spec tr:nth-child(2) td:nth-child(1)::before{
-                content: "Name";
+                content: "Macro";
             }
             table.macro-spec tr:nth-child(2) td:nth-child(2){
                 font-family: 'Courier New', Courier, monospace;
@@ -56,6 +72,10 @@
             }
             table.macro-spec tr:nth-child(6) td:nth-child(1)::before{
                 content: "Contexts";
+            }
+
+            table.macro-spec ul{
+                margin: 0;
             }
             table.macro-spec tr:nth-child(7) td:nth-child(1)::before{
                 content: "Description";
@@ -1915,7 +1935,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            <code>mautoplay,fullscreen,icon</code>>
+                            <code>mautoplay,fullscreen,icon</code>
                         </td>
                     </tr>
                 </tbody>
