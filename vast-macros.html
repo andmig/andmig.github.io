@@ -3,6 +3,42 @@
     <head>
         <meta charset="UTF-8">
         <title>VAST 4.x Macros</title>
+        <script>
+           
+            (function () {
+
+                class TOC{
+                    constructor(){
+                        
+                    }
+
+                    init(doc){
+                        console.log("TOC.init");
+                        let tables = document.querySelectorAll(".macro-spec");
+                        console.log(tables);
+                    }
+
+                }
+
+                class Main{
+                    constructor(doc, win, toc){
+                        this.init(doc, win, toc);
+                    }
+
+                    init(doc, win, toc){
+                        console.log("Main.init", doc.readyState)
+                        if(doc.readyState != "complete"){
+                            win.addEventListener("load", () => {
+                                console.log("win load", doc.readyState);
+                                toc.init();
+                            })
+                        }
+                    }
+                }
+
+                let main = new Main(document, window, new TOC());
+            }());
+        </script>
         <style>
             body{
                 font-family: Arial, Helvetica, sans-serif;
@@ -97,7 +133,7 @@
 
             table.example th, td{
                 vertical-align: top;
-                border: 1px solid #000;
+                border: 1px solid #cccccc;
                 padding: 0.5em;
             }
 
@@ -111,7 +147,7 @@
 
         <h1>VAST 4.x Macros</h1>
         <h2>1. Generic Macros</h2>
-        <table class="macro-spec">
+        <table class="macro-spec" macroName="TIMESTAMP">
             <tbody>
                 <tr>
                     <th></th>
@@ -408,8 +444,8 @@
                 <tr>
                     <td></td>
                     <td>
-                            List of blocked ad categories. Encoded with <code>IABN-N</code> values as specified in the "Content Categories" list of AdCOM 1.0.<br>
-                            Values must be taken from the BlockedCategory element (3.19.2) in Wrapper ad elements.
+                        List of blocked ad categories. Encoded with <code>IABN-N</code> values as specified in the "Content Categories" list of AdCOM 1.0.<br>
+                        Values must be taken from the BlockedCategory element (3.19.2) in Wrapper ad elements.
                     </td>
                 </tr>
                 <tr>
@@ -684,7 +720,7 @@
                 <tr>
                     <td></td>
                     <td>
-                        Indicates whether the ad’s intended use case was video, audio, or hybrid, as defined in the adType attribute of the VAST <code>&lt;Ad&gt;</code> element.
+                        Indicates whether the ad’s intended use case was video, audio, or hybrid, as defined in the <code>adType</code> attribute of the VAST <code>&lt;Ad&gt;</code> element.
                     </td>
                 </tr>
                 <tr>
