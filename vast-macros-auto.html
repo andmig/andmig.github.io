@@ -169,6 +169,7 @@
                                 item.subsection = [item.categoryindex, ".", subsections[item.categoryindex]].join("");
                                 let spec = document.createElement("div");
                                 spec.setAttribute("macro-spec", "");
+                                spec.id = ["macro-spec", item.name.toLowerCase()].join("-");
                                 // determine if the item has possible values
                                 let h3 = document.createElement("h3");
                                 h3.innerText = [item.subsection, " [", item.name, "]"].join("");
