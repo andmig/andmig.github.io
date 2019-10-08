@@ -7,85 +7,15 @@
             (
                 function(){
                     const config = {
-                        //jsonURI: "http://127.0.0.1/iab/macros-data.json"
-                        jsonURI: "data/macros-data.json"
+                        jsonURI: "http://127.0.0.1/iab/macros-data.json"
+                        //jsonURI: "data/macros-data.json"
                     }
 
-                    class IDGenerator{
-                        constructor(){
-                            // list of values generated during session - to assure true uniqueness
-                            this.sessionValues = [null,undefined];
-                            // store chars in arrays - mainly to reuse them for greater degree of randomization.
-                            // alpha array
-                            this.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-                            // hex chars
-                            this.hex = "0123456789ABCDEF".split("");
-                            // integers array
-                            this.ints = "1234567890".split("");
-                        }
-
-                        // gimmick - just implements UUID 8-4-4-4-12 octets convention with hex numbers.
-                        getUUID(allcaps = false){
-                            var populate = this.populate.bind(this);
-                            var values = this.hex;
-                            var list = [populate(8, values), populate(4, values), populate(4, values), populate(4, values), populate(12, values)].join("-");
-                            return allcaps ? list.toUpperCase() : list.toLowerCase();
-                        }
-
-                        // generates integer of any length - except for JS integer limitations.
-                        getInteger(length = 8){
-                            var list = [];
-                            // cannot start with zero
-                            while(!list[0]){
-                                this.shuffle(this.ints);
-                                list[0] = this.ints[0];
-                            }
-
-                            return this.populate(length, this.ints, list);
-                        }
-                        // radom alphabetical chars
-                        getString(length = 16, allcaps = false){
-                            let res = this.populate(length, this.letters);
-                            return allcaps ? res.toUpperCase() : res.toLowerCase();
-                        }
-
-                        /**
-                        * generates random string out of values
-                        * @param length - length of result
-                        * @param value - list of values used to get individial element value
-                        * @param list - optional array to pupulate
-                        **/
-                        populate(length, values, list = []){
-                            while(list.length < length){
-                                this.shuffle(values);
-                                list.push(values[0]);
-                            }
-                            var value = list.join("");
-                            while(this.sessionValues.includes(value)){
-                                value = this.populate(length, values);
-                            }
-                            // store value globally
-                            this.sessionValues.push(value);
-                            return value;
-                        }
-
-                        // Fisher–Yates shuffle
-                        shuffle(input){
-                            if(input.length === 1) return input;
-                            for (let i = input.length - 1; i >= 0; i--){
-                                let ri = ~~(Math.random() * (i + 1));
-                                let iai = input[ri];
-                                input[ri] = input[i];
-                                input[i] = iai;
-                            }
-                        }
-
-                    }
                     class Main{
                         constructor(dependencies = {}){
                             this.builder = dependencies.builder;
                             this.config = dependencies.config;
-                            this.uids = dependencies.uids;
+                            this.device = dependencies.device;
                             this.init();
 
                         }
@@ -108,6 +38,7 @@
                         start(){
                             if(document.readyState == "complete" && this.json){
                                 this.builder.build(this.json, this.uids);
+                                this.device.init();
                             }
                         }
 
@@ -118,7 +49,7 @@
                             this.data = null;
                         }
 
-                        build(data, uids){
+                        build(data){
                             data.categories.sort(
                                 (a, b) => {
                                     return a.index - b.index
@@ -170,12 +101,12 @@
                                 item.subsection = [item.categoryindex, ".", subsections[item.categoryindex]].join("");
                                 let spec = document.createElement("div");
                                 spec.setAttribute("macro-spec", "");
-                                spec.id = ["macro-spec", item.name.toLowerCase()].join("-");
                                 // determine if the item has possible values
                                 let h3 = document.createElement("h3");
+                                h3.id = ["macro-spec", item.name.toLowerCase()].join("-");
                                 h3.innerText = [item.subsection, " [", item.name, "]"].join("");
                                 let section = sections[item.categoryindex];
-                                console.log("item.categoryindex", subsections[item.categoryindex])
+                                //console.log("item.categoryindex", subsections[item.categoryindex])
                                 section.appendChild(h3);
                                 for(let p in item){
                                     if(!displayColumns.includes(p)) continue;
@@ -273,7 +204,6 @@
                                 num.innerText = item.subsection;
                                 let text = document.createElement("span");
                                 text.innerText = ["[", macro, "]"].join("");
-                               // link.innerText = [item.subsection, " [", macro, "]"].join("");
                                 link.appendChild(num);
                                 link.appendChild(text);
                                 line.appendChild(link);
@@ -292,9 +222,30 @@
 
                     }
 
+                    class DeviceManager{
+                        constructor(){
+
+                        }
+
+                        init(){
+                            window.addEventListener("resize", () =>{
+                                console.log("onResize", window.innerWidth);
+                                if(window.innerWidth < 900){
+                                    // let nav = document.querySelector("nav");
+                                    // let wrapper = document.querySelector("#nav-wrapper");
+                                    // wrapper.appendChild(nav);
+                                }
+                            });
+
+                            // function onResize(){
+                            //     console.log("onResize", window.innerWidth);
+                            // }
+                        }
+                    }
+
                     const dependencies = {
                         builder: new Builder(),
-                        uids: new IDGenerator(),
+                        device: new DeviceManager(),
                         config: config
                     }
 
@@ -353,13 +304,11 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             word-wrap: break-word;
-
             -ms-word-break: break-all;
             /* This is the dangerous one in WebKit, as it breaks things wherever */
             word-break: break-all;
             /* Instead use this non-standard one: */
             word-break: break-word;
-
             /* Adds a hyphen where the word breaks, if supported (No Blink) */
             -ms-hyphens: auto;
             -moz-hyphens: auto;
@@ -479,6 +428,7 @@
         <div id="section-intro">
             <h1>VAST Macros</h1>
         </div>
+        <div id="nav-wrapper"></div>
     </main>
 </body>
 
